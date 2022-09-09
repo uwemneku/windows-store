@@ -1,6 +1,8 @@
-import next from "next";
-import { ReactElement } from "react";
+import next, { NextPage } from "next";
+import { ReactElement, ReactNode } from "react";
 
-type NextPageWithLayout<p = {}, IP = P> = NextPage<PageTransitionEvent, IP> & {
+type NextPageWithLayout<P = {}, IP = P> = NextPage<PageTransitionEvent, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
+
+interface AppContext {}
