@@ -12,7 +12,7 @@ function Header() {
   };
   return (
     <header>
-      <nav className="px-2 flex flex-col justify-between h-full py-5">
+      <nav className="px-1 flex sm:flex-col  justify-between h-full py-5">
         <Link href={"/"}>
           <a>
             <NavItem
@@ -22,7 +22,7 @@ function Header() {
             />
           </a>
         </Link>
-        <div className="flex flex-col">
+        <div className="flex sm:flex-col">
           <Link href={"library"}>
             <a>
               <NavItem
