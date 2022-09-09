@@ -18,7 +18,8 @@
     "paths": {
       "components/*":["./components/*"],
       "hooks/*":["./hooks/*"],
-      "context/*":["./context/*"]
+      "context/*":["./context/*"],
+      "pageSections/*":["./pageSections/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
