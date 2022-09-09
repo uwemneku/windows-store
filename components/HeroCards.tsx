@@ -19,7 +19,7 @@ interface Props {
 }
 
 function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
-  const isActive = useSpring(0, { duration: 2000 });
+  const isActive = useSpring(0, { duration: 2500 });
   const imageStyles = useAnimation();
   const textStyles = useAnimation();
   const containerStyles = useAnimation();
@@ -32,6 +32,7 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
     textStyles.set({
       x: 0,
       opacity: 1,
+      transition: { duration: 1500 },
     });
     containerStyles.set({ borderWidth: 4 });
   }, [containerStyles, imageStyles, textStyles]);
@@ -105,14 +106,12 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
           objectPosition={"center"}
         />
       </motion.figure>
-      <div className="flex-1 flex items-center z-20">
-        <motion.p
-          animate={textStyles}
-          className={`text-white font-bold text-lg opacity-0 -translate-x-20 p-5 transition`}
-        >
-          The Almighty Thor
-        </motion.p>
-      </div>
+      <motion.div
+        animate={textStyles}
+        className="flex-1 flex items-center z-20 opacity-0 -translate-x-20 p-5 transition"
+      >
+        <p className={`text-white font-bold text-lg `}>The Almighty Thor</p>
+      </motion.div>
       <motion.div
         transition={{ duration: 10 }}
         layout
