@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, RefObject, useRef } from "react";
 import {
   motion,
   MotionValue,
@@ -12,6 +12,7 @@ import tw from "./tw";
 
 interface Props {
   currentIndex: MotionValue<number>;
+  containerRef: RefObject<HTMLDivElement>;
   index: number;
   onTransitionEnd: () => void;
   onClick: (index: number) => void;
@@ -24,11 +25,13 @@ function HeroCards({
   onTransitionEnd,
   onClick,
   data,
+  containerRef,
 }: Props) {
   const isActive = useSpring(0, { duration: 3000 });
   const imageStyles = useAnimation();
   const textStyles = useAnimation();
   const containerStyles = useAnimation();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const processStyles = useTransform(isActive, (i) => {
     const u = transform(i, [0, 1], [0, 100]);
@@ -71,12 +74,23 @@ function HeroCards({
       if (i === index) {
         start();
         isActive.set(1);
+        if (cardRef.current && containerRef.current) {
+          const { left, right } = cardRef.current?.getBoundingClientRect();
+          const isInView = left >= 0 && right <= window.innerWidth;
+          if (!isInView) {
+            console.log(right - window.innerWidth);
+            containerRef.current.scrollBy({
+              behavior: "smooth",
+              left: right - window.innerWidth + 10,
+            });
+          }
+        }
       }
     });
     return () => {
       unSub();
     };
-  }, [currentIndex, index, isActive, start]);
+  }, [currentIndex, index, isActive, start, containerRef]);
   useEffect(() => {
     const unSub = isActive.onChange((i) => {
       if (i === 1) {
@@ -84,7 +98,6 @@ function HeroCards({
       } else if (i === 0) {
         stop();
         currentIndex.get() === index && onTransitionEnd();
-        // stop();
       }
     });
     return () => {
@@ -94,6 +107,7 @@ function HeroCards({
 
   return (
     <Container
+      ref={cardRef}
       onHoverStart={() => {
         start();
       }}
@@ -116,14 +130,14 @@ function HeroCards({
       </Figure>
       <TextContainer animate={textStyles}>
         <motion.p className={`text-white font-bold text-lg`}>
-          The Almighty Thor
+          {data.title}
         </motion.p>
       </TextContainer>
       <motion.div
         transition={{ duration: 10 }}
         layout
         style={{ background: processStyles }}
-        className="bg-white flex-0 h-2 absolute w-full bottom-0 z-20"
+        className="bg-slate-200 flex-0 h-1 absolute w-full bottom-0 z-20"
         onTransitionEnd={onTransitionEnd}
       />
     </Container>
@@ -131,11 +145,11 @@ function HeroCards({
 }
 
 const Container = tw(
-  "w-[200px] h-[120px] shrink-0 rounded-md bg-white group overflow-hidden border-0  border-blue-400 relative flex flex-col z-20",
+  "w-[220px] h-[120px] shrink-0 rounded-md bg-white group overflow-hidden border-0  border-blue-400 relative flex flex-col z-20",
   motion.div
 );
 const TextContainer = tw(
-  "absolute w-full h-full flex-1 flex items-center z-10 opacity-0 -translate-x-20 p-5 bg-gradient-to-r from-[rgba(0,0,0,0.7)] to-transparent",
+  "absolute w-full h-full flex-1 flex items-center z-10 opacity-0 -translate-x-20 p-2 bg-gradient-to-r from-[rgba(0,0,0,0.7)] to-transparent",
   motion.div
 );
 const Figure = tw(

@@ -18,15 +18,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HeroSection containerRef={containerRef} />
-      <div className="p-10">
+      <div className="px-5">
         <div className="flex flex-wrap  gap-5 mb-5">
           {data.map((_, i) => (
-            <AppCard id={_ + "123"} isVertical key={i} />
+            <AppCard id={_ + "123"} key={i} />
           ))}
         </div>
         <div className="flex flex-wrap gap-5">
           {data.map((_, i) => (
-            <AppCard id={_} key={i} />
+            <AppCard isVertical id={_} key={i} />
           ))}
         </div>
       </div>
