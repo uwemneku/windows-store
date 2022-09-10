@@ -1,5 +1,6 @@
 import HeroCards from "components/HeroCards";
 import { useMotionValue } from "framer-motion";
+import Image from "next/image";
 import React, { useEffect, useCallback } from "react";
 
 function HeroSection() {
@@ -16,7 +17,18 @@ function HeroSection() {
 
   return (
     <div>
-      <div className="h-[50vh] bg-white"></div>
+      <div className="h-[50vw] max-h-[690px] bg-white overflow-hidden bg-no-repeat relative">
+        <Image
+          src={"/two.jpg"}
+          layout="fill"
+          className="w-full overflow-hidden bg-center object-center"
+          alt=""
+          width={"100%"}
+          height={"100%"}
+          objectFit="cover"
+          objectPosition={"center"}
+        />
+      </div>
       <div className="flex  gap-5 mb-5 overflow-auto p-10 -mt-28">
         {data.map((_, i) => (
           <HeroCards

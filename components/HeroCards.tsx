@@ -1,15 +1,14 @@
 import Image from "next/image";
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   motion,
   MotionValue,
-  useMotionValue,
   useSpring,
+  useAnimation,
   useTransform,
   transform,
-  useAnimationControls,
-  useAnimation,
 } from "framer-motion";
+import tw from "./tw";
 
 interface Props {
   currentIndex: MotionValue<number>;
@@ -19,20 +18,25 @@ interface Props {
 }
 
 function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
-  const isActive = useSpring(0, { duration: 2500 });
+  const isActive = useSpring(0, { duration: 3000 });
   const imageStyles = useAnimation();
   const textStyles = useAnimation();
   const containerStyles = useAnimation();
 
+  const processStyles = useTransform(isActive, (i) => {
+    const u = transform(i, [0, 1], [0, 100]);
+    return `linear-gradient(to right, transparent, transparent 0%, #eee 0%, #eee ${u}%, transparent ${u}%, transparent)`;
+  });
+
   const start = useCallback(async () => {
     imageStyles.set({
       scale: 1,
-      transition: { duration: 1500 },
+      transitionDuration: "1.5s",
     });
     textStyles.set({
       x: 0,
       opacity: 1,
-      transition: { duration: 1500 },
+      transitionDuration: "0.5s",
     });
     containerStyles.set({ borderWidth: 4 });
   }, [containerStyles, imageStyles, textStyles]);
@@ -40,11 +44,13 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
     await imageStyles.stop();
     imageStyles.set({
       scale: 1.1,
-      transition: { duration: 1500 },
+      transitionDuration: "1s",
     });
     textStyles.set({
       x: -40,
       opacity: 0,
+      transitionDuration: "0.5s",
+      transition: { duration: 4000 },
     });
     containerStyles.set({ borderWidth: 0 });
   }, [containerStyles, imageStyles, textStyles]);
@@ -67,10 +73,10 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
   useEffect(() => {
     const unSub = isActive.onChange((i) => {
       if (i === 1) {
-        stop();
         isActive.set(0);
+      } else if (i === 0) {
+        stop();
         currentIndex.get() === index && onTransitionEnd();
-      } else {
         // stop();
       }
     });
@@ -80,7 +86,7 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
   }, [currentIndex, index, isActive, onTransitionEnd, start, stop]);
 
   return (
-    <motion.div
+    <Container
       onHoverStart={() => {
         start();
       }}
@@ -89,13 +95,8 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
       }}
       onClick={handleClick}
       animate={containerStyles}
-      className="w-[250px] h-[150px] shrink-0 rounded-md bg-white group overflow-hidden border-0  border-blue-400 relative flex flex-col z-20"
     >
-      <motion.figure
-        layout
-        animate={imageStyles}
-        className="overflow-hidden scale-110 transition duration-500 absolute w-full h-full z-0"
-      >
+      <Figure layout animate={imageStyles}>
         <Image
           src={"https://picsum.photos/200/300"}
           layout="responsive"
@@ -105,21 +106,33 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
           objectFit="cover"
           objectPosition={"center"}
         />
-      </motion.figure>
-      <motion.div
-        animate={textStyles}
-        className="flex-1 flex items-center z-20 opacity-0 -translate-x-20 p-5 transition"
-      >
-        <p className={`text-white font-bold text-lg `}>The Almighty Thor</p>
-      </motion.div>
+      </Figure>
+      <TextContainer animate={textStyles}>
+        <motion.p className={`text-white font-bold text-lg`}>
+          The Almighty Thor
+        </motion.p>
+      </TextContainer>
       <motion.div
         transition={{ duration: 10 }}
         layout
-        className="bg-white flex-0 h-2 z-10 "
+        style={{ background: processStyles }}
+        className="bg-white flex-0 h-2 absolute w-full bottom-0 z-20"
         onTransitionEnd={onTransitionEnd}
       />
-    </motion.div>
+    </Container>
   );
 }
 
+const Container = tw(
+  "w-[200px] h-[120px] shrink-0 rounded-md bg-white group overflow-hidden border-0  border-blue-400 relative flex flex-col z-20",
+  motion.div
+);
+const TextContainer = tw(
+  "absolute w-full h-full flex-1 flex items-center z-10 opacity-0 -translate-x-20 p-5 bg-gradient-to-r from-[rgba(0,0,0,0.7)] to-transparent",
+  motion.div
+);
+const Figure = tw(
+  `overflow-hidden scale-110 transition duration-500 w-full h-full z-0`,
+  motion.figure
+);
 export default HeroCards;
