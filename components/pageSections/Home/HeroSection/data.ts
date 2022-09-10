@@ -1,7 +1,7 @@
 export const heroData: { image: string; title: string }[] = [
   {
-    image: "/one.jpg",
-    title: "Never Ending",
+    image: "/six.jpg",
+    title: "Waiting for Joy",
   },
   {
     image: "/two.jpg",
@@ -12,11 +12,23 @@ export const heroData: { image: string; title: string }[] = [
     title: "JOY",
   },
   {
+    image: "/eight.jpg",
+    title: "X-Stars",
+  },
+  {
     image: "/four.jpg",
     title: "The Hanging Man",
   },
   {
     image: "/five.jpg",
-    title: "What if?",
+    title: "What if ?",
+  },
+  {
+    image: "/one.jpg",
+    title: "Never Ending",
+  },
+  {
+    image: "/seven.jpg",
+    title: "The Middle",
   },
 ];

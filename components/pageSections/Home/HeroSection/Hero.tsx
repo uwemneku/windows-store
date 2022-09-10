@@ -41,7 +41,7 @@ function Hero({ currentIndex }: Props) {
             />
           </motion.figure>
         </AnimatePresence>
-        <div className="absolute w-full h-full flex items-center bg-gradient-to-r via-transparent p-10  from-background-100 to-transparent">
+        <div className="absolute w-full h-full flex items-center bg-gradient-to-r via-transparent p-5 sm:p-10  from-background-100 to-transparent">
           <AnimatePresence mode="wait" exitBeforeEnter>
             <motion.div
               key={heroData[index].title}
@@ -51,10 +51,13 @@ function Hero({ currentIndex }: Props) {
               transition={{ bounce: false, duration: 0.5 }}
               className="text-white flex-col gap-4"
             >
-              <h1 className="text-2xl font-semibold">
+              <h1
+                className="text-2xl font-semibold"
+                style={{ textShadow: "1px 1px 2px black" }}
+              >
                 {heroData[index].title}
               </h1>
-              <button className="shadow-xl drop-shadow-xl p-1 px-6 rounded-sm delay-150 bg-[rgba(0,0,0,0.2)] mt-4">
+              <button className="shadow-xl drop-shadow-xl p-1 px-6 rounded-sm delay-150 bg-[rgba(0,0,0,0.2)] mt-1 sm:mt-4">
                 See details
               </button>
             </motion.div>

@@ -34,6 +34,6 @@ const Home: NextPage = () => {
   );
 };
 
-const data = new Array(10).fill(1).map((i) => Math.random().toString());
+const data = new Array(11).fill(1).map((i) => Math.random().toString());
 
 export default Home;

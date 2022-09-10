@@ -15,7 +15,9 @@ function AppCard({ id, isVertical }: Props) {
       id={id}
       layout="preserve-aspect"
       className={
-        isVertical ? "flex-1 md:min-w-[199px] grow-0" : "w-full md:flex-1"
+        isVertical
+          ? "flex-1 md:min-w-[199px] md:max-w-[220px] "
+          : "w-full md:flex-1 md:max-w-[350px]"
       }
       layoutId={id}
     >
