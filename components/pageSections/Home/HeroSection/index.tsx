@@ -1,14 +1,24 @@
 import HeroCards from "components/HeroCards";
-import { useMotionValue } from "framer-motion";
+import { useMotionValue, useScroll, useTransform, motion } from "framer-motion";
 import Image from "next/image";
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, RefObject } from "react";
+import { heroData } from "./data";
+import Hero from "./Hero";
 
-function HeroSection() {
+interface Props {
+  containerRef: RefObject<HTMLDivElement>;
+}
+function HeroSection({ containerRef }: Props) {
   const currentIndex = useMotionValue(-1);
+  const { scrollY } = useScroll({ container: containerRef });
+  const marginTop = useTransform(scrollY, [0, 200], [-112, -180]);
   useEffect(() => {
     currentIndex.get() < 0 && currentIndex.set(0);
     console.log("ddd");
   }, [currentIndex]);
+  useEffect(() => {
+    scrollY.onChange(console.log);
+  }, [scrollY]);
 
   const onTransitionEnd = useCallback(() => {
     const isLastCard = currentIndex.get() + 1 === data.length;
@@ -17,20 +27,12 @@ function HeroSection() {
 
   return (
     <div>
-      <div className="h-[50vw] max-h-[690px] bg-white overflow-hidden bg-no-repeat relative">
-        <Image
-          src={"/two.jpg"}
-          layout="fill"
-          className="w-full overflow-hidden bg-center object-center"
-          alt=""
-          width={"100%"}
-          height={"100%"}
-          objectFit="cover"
-          objectPosition={"center"}
-        />
-      </div>
-      <div className="flex  gap-5 mb-5 overflow-auto p-10 -mt-28">
-        {data.map((_, i) => (
+      <Hero currentIndex={currentIndex} />
+      <motion.div
+        style={{ marginTop }}
+        className="flex  gap-5 mb-5 overflow-auto p-10  relative z-40 bg-gradient-to-b from-transparent via-background-100 to-background-100"
+      >
+        {heroData.map((_, i) => (
           <HeroCards
             onClick={(i) => {
               currentIndex.set(i);
@@ -39,9 +41,10 @@ function HeroSection() {
             currentIndex={currentIndex}
             index={i}
             key={i}
+            data={_}
           />
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

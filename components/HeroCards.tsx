@@ -15,9 +15,16 @@ interface Props {
   index: number;
   onTransitionEnd: () => void;
   onClick: (index: number) => void;
+  data: { image: string; title: string };
 }
 
-function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
+function HeroCards({
+  currentIndex,
+  index,
+  onTransitionEnd,
+  onClick,
+  data,
+}: Props) {
   const isActive = useSpring(0, { duration: 3000 });
   const imageStyles = useAnimation();
   const textStyles = useAnimation();
@@ -98,7 +105,7 @@ function HeroCards({ currentIndex, index, onTransitionEnd, onClick }: Props) {
     >
       <Figure layout animate={imageStyles}>
         <Image
-          src={"https://picsum.photos/200/300"}
+          src={data.image}
           layout="responsive"
           alt=""
           width={300}
