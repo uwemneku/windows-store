@@ -27,7 +27,7 @@ function HeroSection({ containerRef }: Props) {
   }, [currentIndex]);
 
   const onTransitionEnd = useCallback(() => {
-    const isLastCard = currentIndex.get() + 1 === data.length;
+    const isLastCard = currentIndex.get() + 1 === heroData.length;
     currentIndex.set(isLastCard ? 0 : currentIndex.get() + 1);
   }, [currentIndex]);
 
@@ -56,6 +56,5 @@ function HeroSection({ containerRef }: Props) {
     </div>
   );
 }
-const data = new Array(5).fill(1).map((i) => Math.random().toString());
 
 export default HeroSection;

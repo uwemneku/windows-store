@@ -14,6 +14,8 @@ function Hero({ currentIndex }: Props) {
   const [index, setIndex] = useState(0);
   useEffect(() => {
     const unSub = currentIndex.onChange((i) => {
+      console.log(i);
+
       if (i >= 0) {
         setIndex(i);
       }
