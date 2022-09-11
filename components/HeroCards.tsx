@@ -9,6 +9,7 @@ import {
   transform,
 } from "framer-motion";
 import tw from "./tw";
+import { scrollItemIntoContainer } from "constant/utils";
 
 interface Props {
   currentIndex: MotionValue<number>;
@@ -27,18 +28,18 @@ function HeroCards({
   data,
   containerRef,
 }: Props) {
-  const isActive = useSpring(0, { duration: 3000 });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const animationTriggerValue = useSpring(0, { duration: 3000 });
+  const isCurrentlyActive = useTransform(currentIndex, (i) => i === index); // indicates if card is animating
   const imageStyles = useAnimation();
   const textStyles = useAnimation();
   const containerStyles = useAnimation();
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const processStyles = useTransform(isActive, (i) => {
+  const progressStyles = useTransform(animationTriggerValue, (i) => {
     const u = transform(i, [0, 1], [0, 100]);
     return `linear-gradient(to right, transparent, transparent 0%, #eee 0%, #eee ${u}%, transparent ${u}%, transparent)`;
   });
 
-  const start = useCallback(async () => {
+  const startAnimation = useCallback(() => {
     imageStyles.set({
       scale: 1,
       transitionDuration: "1.5s",
@@ -49,8 +50,8 @@ function HeroCards({
       transitionDuration: "0.5s",
     });
     containerStyles.set({ borderWidth: 4 });
-  }, [containerStyles, imageStyles, textStyles]);
-  const stop = useCallback(async () => {
+  }, []);
+  const stopAnimation = useCallback(async () => {
     await imageStyles.stop();
     imageStyles.set({
       scale: 1.1,
@@ -63,57 +64,42 @@ function HeroCards({
       transition: { duration: 4000 },
     });
     containerStyles.set({ borderWidth: 0 });
-  }, [containerStyles, imageStyles, textStyles]);
+  }, []);
 
-  const handleClick = () => {
-    isActive.set(1);
+  function handleClick() {
     onClick(index);
-  };
+  }
+
+  function handleHoverEnd() {
+    if (!isCurrentlyActive.get()) stopAnimation();
+  }
   useEffect(() => {
-    const unSub = currentIndex.onChange((i) => {
-      if (i === index) {
-        start();
-        isActive.set(1);
-        if (cardRef.current && containerRef.current) {
-          const { left, right } = cardRef.current?.getBoundingClientRect();
-          const isInView = left >= 0 && right <= window.innerWidth;
-          if (!isInView) {
-            console.log(right - window.innerWidth);
-            containerRef.current.scrollBy({
-              behavior: "smooth",
-              left: right - window.innerWidth + 10,
-            });
-          }
-        }
+    const unSubscribe = isCurrentlyActive.onChange((iActive) => {
+      if (iActive) {
+        startAnimation();
+        animationTriggerValue.set(1);
+        scrollItemIntoContainer(cardRef.current, containerRef.current);
       }
     });
-    return () => {
-      unSub();
-    };
-  }, [currentIndex, index, isActive, start, containerRef]);
-  useEffect(() => {
-    const unSub = isActive.onChange((i) => {
+    const _unSubscribe = animationTriggerValue.onChange((i) => {
       if (i === 1) {
-        isActive.set(0);
+        animationTriggerValue.set(0);
       } else if (i === 0) {
-        stop();
-        currentIndex.get() === index && onTransitionEnd();
+        stopAnimation();
+        isCurrentlyActive.get() && onTransitionEnd();
       }
     });
     return () => {
-      unSub();
+      unSubscribe();
+      _unSubscribe();
     };
-  }, [currentIndex, index, isActive, onTransitionEnd, start, stop]);
+  }, [containerRef, index, onTransitionEnd, startAnimation, stopAnimation]);
 
   return (
     <Container
       ref={cardRef}
-      onHoverStart={() => {
-        start();
-      }}
-      onHoverEnd={() => {
-        currentIndex.get() !== index && stop();
-      }}
+      onHoverStart={startAnimation}
+      onHoverEnd={handleHoverEnd}
       onClick={handleClick}
       animate={containerStyles}
     >
@@ -136,7 +122,7 @@ function HeroCards({
       <motion.div
         transition={{ duration: 10 }}
         layout
-        style={{ background: processStyles }}
+        style={{ background: progressStyles }}
         className="bg-slate-200 flex-0 h-1 absolute w-full bottom-0 z-20"
         onTransitionEnd={onTransitionEnd}
       />
