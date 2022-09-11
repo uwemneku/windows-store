@@ -1,4 +1,5 @@
 import HeroCards from "components/HeroCards";
+import tw from "components/tw";
 import {
   useMotionValue,
   useScroll,
@@ -6,7 +7,6 @@ import {
   motion,
   transform,
 } from "framer-motion";
-import Image from "next/image";
 import React, { useEffect, useCallback, RefObject, useRef } from "react";
 import { heroData } from "./data";
 import Hero from "./Hero";
@@ -23,8 +23,8 @@ function HeroSection({ containerRef }: Props) {
     return transform(i, [0, 200], [-8, -12], { clamp: true }) + "%";
   });
   useEffect(() => {
-    currentIndex.get() < 0 && currentIndex.set(0);
-  }, [currentIndex]);
+    currentIndex.set(0);
+  }, []);
 
   const onTransitionEnd = useCallback(() => {
     const isLastCard = currentIndex.get() + 1 === heroData.length;
@@ -32,13 +32,9 @@ function HeroSection({ containerRef }: Props) {
   }, [currentIndex]);
 
   return (
-    <div>
+    <>
       <Hero currentIndex={currentIndex} />
-      <motion.div
-        style={{ marginTop }}
-        ref={ref}
-        className={`flex overflow-auto gap-5 mb-5 p-10  relative z-40 bg-gradient-to-b from-transparent via-background-100 to-background-100 ${style.hello}`}
-      >
+      <Container style={{ marginTop }} ref={ref} className={style.hello}>
         {heroData.map((_, i) => (
           <HeroCards
             containerRef={ref}
@@ -48,13 +44,17 @@ function HeroSection({ containerRef }: Props) {
             onTransitionEnd={onTransitionEnd}
             currentIndex={currentIndex}
             index={i}
-            key={i}
+            key={_.title}
             data={_}
           />
         ))}
-      </motion.div>
-    </div>
+      </Container>
+    </>
   );
 }
 
+const Container = tw(
+  "flex overflow-auto gap-5 mb-5 p-10  relative z-40 bg-gradient-to-b from-transparent via-background-100 to-background-100",
+  motion.div
+);
 export default HeroSection;
